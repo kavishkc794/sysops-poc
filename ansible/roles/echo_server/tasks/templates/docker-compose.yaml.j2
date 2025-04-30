@@ -1,0 +1,20 @@
+# Dynamically generate docker-compose.yaml to launch multiple EchoServers
+
+version: "3.9"
+
+services:
+{% for i in range(echo_server_count) %}
+  echo_server_{{ i }}:
+    image: gcr.io/google_containers/echoserver:1.8
+    container_name: echo_server_{{ i }}
+    ports:
+      - "{{ 8080 + i }}:8080"
+    networks:
+      - common_network
+    restart: always
+{% endfor %}
+
+# Docker compose attach the container to the network but doesn't create it.
+networks:
+  common_network:
+    external: true

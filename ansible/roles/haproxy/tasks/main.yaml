@@ -1,0 +1,30 @@
+# Deploy HAProxy load balancer to route API and Statics traffic.
+
+- name: Create directory for HAProxy
+  file:
+    path: /opt/haproxy
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+  tags: haproxy
+
+- name: Deploy docker-compose file for HAProxy
+  template:
+    src: docker-compose.yaml.j2
+    dest: /opt/haproxy/docker-compose.yaml
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+  tags: haproxy
+  notify: Restart HAProxy
+
+- name: Deploy HAProxy configuration
+  template:
+    src: haproxy.cfg.j2
+    dest: /opt/haproxy/haproxy.cfg
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+  tags: haproxy
+  notify: Restart HAProxy

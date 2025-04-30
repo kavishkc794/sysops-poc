@@ -1,0 +1,4 @@
+# Define variables accessible in the entire playbook
+
+echo_server_count: 3
+nginx_server_count: 3

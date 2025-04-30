@@ -1,0 +1,50 @@
+# HAProxy configuration template
+# Load balance between Echo Servers and Nginx Servers
+# Behavior:
+# - /api traffic --> EchoServers (roundrobin)
+# - /statics --> NginxServers (roundrobin)
+# - /statics/<path> --> NginxServers (URI-based sticky hashing)
+
+# GLOBAL section: HAProxy global process settings
+global
+    maxconn 256          # Maximum number of concurrent connections allowed
+
+# DEFAULTS section: Default settings for all frontends/backends
+defaults
+    mode http            # Operating mode (Layer 7 HTTP)
+    timeout connect 5s   # Timeout for establishing TCP connection to the backend
+    timeout client  5s   # Timeout for client inactivity
+    timeout server  10s  # Timeout for server inactivity
+
+# FRONTEND: Entry point for incoming HTTP requests
+frontend http_front
+    bind *:80            # Listen on port 80 for incoming traffic
+
+    # ACLs (Access Control Lists) to categorize requests based on URL path
+    acl is_api path_beg /api                     # If URL starts with /api
+    acl is_statics path -i /statics              # If URL exactly matches /statics (case insensitive)
+    acl is_statics_path path_beg /statics/       # If URL starts with /statics/ (any subpath)
+
+    # Decide which backend to use based on ACL matches
+    use_backend echo_roundrobin if is_api          # /api -> EchoServers (roundrobin)
+    use_backend statics_roundrobin if is_statics   # /statics -> NginxServers (roundrobin)
+    use_backend statics_hashed if is_statics_path  # /statics/<path> -> NginxServers (sticky)
+
+# BACKEND DEFINITION SECTION
+# Define a reusable macro to render backend configurations dynamically
+
+{% macro render_backend(backend_name, balance_method, server_prefix, port, count) -%}
+backend {{ backend_name }}
+    balance {{ balance_method }} 
+{% for i in range(count) %}
+    server {{ server_prefix }}_{{ i }} {{ server_prefix }}_{{ i }}:{{ port }} check
+{% endfor %}
+{%- endmacro %}
+
+# BACKENDS
+# Call macro for each type of backend traffic
+
+{{ render_backend('echo_roundrobin', 'roundrobin', 'echo_server', 8080, echo_server_count) }}
+{{ render_backend('statics_roundrobin', 'roundrobin', 'nginx_server', 80, nginx_server_count) }}
+{{ render_backend('statics_hashed', 'uri whole', 'nginx_server', 80, nginx_server_count) }}
+

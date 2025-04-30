@@ -1,0 +1,5 @@
+
+- name: Restart HAProxy
+  ansible.builtin.shell: docker compose down && docker compose up -d
+  args:
+    chdir: /opt/haproxy

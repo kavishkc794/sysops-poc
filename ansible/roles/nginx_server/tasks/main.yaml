@@ -1,0 +1,31 @@
+# Deploy multiple Nginx servers with custom responses.
+
+- name: Create directory for Nginx app
+  file:
+    path: /opt/nginx_server
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+  tags: nginx_server
+
+- name: Deploy docker-compose file for Nginx servers
+  template:
+    src: docker-compose.yaml.j2
+    dest: /opt/nginx_server/docker-compose.yaml
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+  tags: nginx_server
+  notify: Restart Nginx Server
+
+- name: Deploy custom Nginx configuration files
+  template:
+    src: default.conf.j2
+    dest: "/opt/nginx_server/nginx_conf_{{ item }}.conf"
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+  loop: "{{ range(nginx_server_count) | list }}"
+  tags: nginx_server
+  notify: Restart Nginx Server

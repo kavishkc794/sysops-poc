@@ -1,0 +1,20 @@
+# docker-compose.yaml for HAProxy
+
+version: "3.9"
+
+services:
+  haproxy:
+    image: haproxy:3.0.3
+    container_name: haproxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      - common_network
+    restart: always
+
+# Docker compose attach the container to the network but doesn't create it.
+networks:
+  common_network:
+    external: true

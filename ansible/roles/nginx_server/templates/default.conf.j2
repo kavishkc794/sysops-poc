@@ -1,0 +1,9 @@
+# Dynamic Nginx configuration to respond with unique server ID.
+
+server {
+    listen 80;
+    location /statics {
+        default_type text/plain;
+        return 200 'Response from Server {{ item }}';
+    }
+}

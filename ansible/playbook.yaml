@@ -1,0 +1,12 @@
+# Ansible Playbook to setup Docker and deploy services.
+
+- name: SysOps Ansible Test Playbook
+  hosts: all
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: common         # Install Docker and Docker Compose
+    - role: echo_server    # Deploy EchoServer app
+    - role: nginx_server   # Deploy Nginx static app
+    - role: haproxy        # Deploy HAProxy load balancer

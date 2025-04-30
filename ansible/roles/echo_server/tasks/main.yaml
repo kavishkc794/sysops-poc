@@ -1,0 +1,20 @@
+# Deploy multiple echoserver containers.
+
+- name: Create directory for echoserver
+  file:
+    path: /opt/echo_server
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+  tags: echo_server
+
+- name: Deploy docker-compose file for echo server
+  template:
+    src: docker-compose.yaml.j2
+    dest: /opt/echo_server/docker-compose.yaml
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+  tags: echo_server
+  notify: Restart echo server

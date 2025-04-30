@@ -1,0 +1,5 @@
+
+- name: Restart echo server
+  ansible.builtin.shell: docker compose down && docker compose up -d
+  args:
+    chdir: /opt/echo_server
