@@ -36,18 +36,18 @@ This project provisions a complete environment using **Vagrant**, **Ansible**, *
 │       ├── echo_server
 │       │   ├── handlers
 │       │   │   └── main.yaml
-│       │   └── tasks
-│       │       ├── main.yaml
-│       │       └── templates
-│       │           └── docker-compose.yaml.j2
+│       │   ├── tasks
+│       │   │   └── main.yaml
+│       │   └── templates
+│       │       └── docker-compose.yaml.j2
 │       ├── haproxy
 │       │   ├── handlers
 │       │   │   └── main.yaml
-│       │   └── tasks
-│       │       ├── main.yaml
-│       │       └── templates
-│       │           ├── docker-compose.yaml.j2
-│       │           └── haproxy.cfg.j2
+│       │   ├── tasks
+│       │   │   └── main.yaml
+│       │   └── templates
+│       │       ├── docker-compose.yaml.j2
+│       │       └── haproxy.cfg.j2
 │       └── nginx_server
 │           ├── handlers
 │           │   └── main.yaml
